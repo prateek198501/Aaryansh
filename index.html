@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Build the Dynasty — China Edition</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; overflow-x:hidden; }
+  body {
+    min-height:100vh;
+    background:linear-gradient(180deg,#1E1510 0%,#33261A 100%);
+    font-family:'Trebuchet MS','Segoe UI',sans-serif;
+    color:#33261A;
+    padding:12px 10px 30px;
+  }
+  #app { width:100%; max-width:560px; margin:0 auto; }
+
+  /* ── Treasury bar ── */
+  .treasury {
+    background:#241A12; border:2px solid #C99A3C; border-radius:14px;
+    padding:10px 12px; margin-bottom:12px;
+  }
+  .treasury-top { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:6px; }
+  .coins { color:#C99A3C; font-size:16px; font-weight:bold; }
+  .coins.bump { animation:coinBump .45s ease; }
+  @keyframes coinBump { 30% { transform:scale(1.35); color:#FFD97A; } }
+  .streak-label { font-size:12px; font-weight:bold; color:#6B5A45; }
+  .streak-label.hot { color:#FF9E3D; animation:firePulse 1s infinite; }
+  @keyframes firePulse { 50% { transform:scale(1.08); text-shadow:0 0 10px rgba(255,158,61,.8);} }
+  .skyline { font-size:24px; min-height:32px; line-height:32px; text-align:center; word-break:break-all; }
+  .skyline .hint { color:#6B5A45; font-size:13px; }
+  .skyline span.b { display:inline-block; animation:buildPop .6s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes buildPop { 0% { transform:scale(0) translateY(20px); opacity:0; } 100% { transform:scale(1) translateY(0); opacity:1; } }
+
+  /* ── Cards ── */
+  .card {
+    background:#F6EDD9; border-radius:16px; padding:18px 16px;
+    box-shadow:0 8px 30px rgba(0,0,0,.45); border:1px solid #E0D2B0;
+    animation:cardIn .45s ease;
+  }
+  @keyframes cardIn { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+  .card.shake { animation:shake .4s; }
+  @keyframes shake { 20%,60% { transform:translateX(-7px);} 40%,80% { transform:translateX(7px);} }
+  .card.royal { background:linear-gradient(180deg,#F9EFD8 0%,#F3E3BC 100%); border:2px solid #C99A3C; }
+
+  h1 { text-align:center; color:#A62C21; font-size:28px; font-family:Georgia,serif; margin:6px 0 2px; }
+  h2 { text-align:center; font-family:Georgia,serif; font-size:26px; margin:4px 0 0; }
+  h3 { font-size:18px; line-height:1.45; margin:6px 0 12px; }
+  .subtitle { text-align:center; color:#7A6A50; letter-spacing:3px; font-size:11px; margin-bottom:10px; }
+  .big-emoji { font-size:52px; text-align:center; animation:float 2.6s ease-in-out infinite; }
+  @keyframes float { 50% { transform:translateY(-7px);} }
+  .years { text-align:center; color:#7A6A50; font-size:13px; margin-top:3px; }
+  .scroll-box {
+    background:#FBF5E6; border:1.5px dashed #C99A3C; border-radius:10px;
+    padding:10px 14px; margin:10px 0; font-size:15px; line-height:1.6;
+  }
+  .scroll-box p { margin:7px 0; opacity:0; animation:factIn .5s ease forwards; }
+  .scroll-box p:nth-child(1){animation-delay:.1s} .scroll-box p:nth-child(2){animation-delay:.45s} .scroll-box p:nth-child(3){animation-delay:.8s}
+  @keyframes factIn { from { opacity:0; transform:translateX(-12px);} to { opacity:1; transform:none;} }
+  .tip { text-align:center; font-size:13px; color:#7A6A50; margin:6px 0; }
+
+  /* ── Decision banner ── */
+  .decision-banner {
+    text-align:center; background:#241A12; color:#C99A3C; border-radius:10px;
+    padding:8px 10px; margin:0 0 10px; font-weight:bold; font-size:14px; letter-spacing:1px;
+    animation:bannerGlow 2s infinite;
+  }
+  @keyframes bannerGlow { 50% { box-shadow:0 0 14px rgba(201,154,60,.55);} }
+  .decision-note { font-size:12.5px; color:#7A6A50; text-align:center; margin-bottom:8px; }
+
+  /* ── Buttons ── */
+  .btn {
+    display:block; width:100%; padding:13px 14px; font-size:16px; font-weight:bold;
+    color:#FFF; background:#A62C21; border:none; border-radius:10px; cursor:pointer;
+    margin-top:12px; font-family:inherit; letter-spacing:.5px;
+    transition:transform .12s, filter .12s; touch-action:manipulation;
+  }
+  .btn:active { transform:scale(.96); filter:brightness(1.15); }
+
+  .opt {
+    display:block; width:100%; text-align:left; padding:12px 13px; margin:8px 0;
+    font-size:15px; border-radius:10px; border:2px solid #D8C9A8; background:#FBF5E6;
+    color:#33261A; font-family:inherit; cursor:pointer; transition:all .15s; touch-action:manipulation;
+    line-height:1.4;
+  }
+  .opt:active { transform:scale(.98); }
+  .opt.right { border-color:#2E7D5B; background:#E4F2E9; animation:rightGlow .5s; }
+  @keyframes rightGlow { 40% { box-shadow:0 0 0 5px rgba(46,125,91,.28);} }
+  .opt.wrong { border-color:#A62C21; background:#F8E2DF; }
+  .opt.chosen { border-color:#C99A3C; background:#FBF0D4; animation:rightGlow .5s; }
+  .opt:disabled { cursor:default; opacity:1; }
+  .opt .earn-tag { float:right; font-weight:bold; color:#8A6A1F; font-size:13.5px; }
+
+  .quiz-meta { display:flex; justify-content:space-between; font-size:12.5px; color:#7A6A50; margin-bottom:6px; }
+
+  .feedback { border-radius:10px; padding:10px 13px; margin-top:10px; font-size:14.5px; line-height:1.55; animation:cardIn .3s ease; }
+  .feedback.good { background:#E4F2E9; } .feedback.bad { background:#FDF3D7; }
+  .feedback.royal { background:#FBF0D4; border:1.5px solid #C99A3C; }
+  .chip { display:inline-block; border-radius:8px; padding:4px 10px; margin:5px 5px 5px 0; font-weight:bold; font-size:14.5px; animation:chipPop .45s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes chipPop { from { transform:scale(0);} }
+  .chip.gold { background:#241A12; color:#C99A3C; }
+  .chip.gold em { color:#FF9E3D; font-style:normal; }
+  .chip.bonus { background:#2E7D5B; color:#FFF; }
+  .chip.wisdom { background:#7A3E9D; color:#FFF; }
+
+  /* ── Progress bar ── */
+  .progress { display:flex; gap:4px; margin-bottom:12px; }
+  .progress div { flex:1; height:8px; border-radius:4px; background:#E4D8BC; transition:background .4s; }
+
+  /* ── Floating gold popup ── */
+  .float-gold {
+    position:fixed; left:50%; transform:translateX(-50%); top:22%;
+    font-size:26px; font-weight:bold; color:#FFD97A; text-shadow:0 2px 6px rgba(0,0,0,.6);
+    pointer-events:none; z-index:50; animation:floatUp 1.1s ease forwards;
+  }
+  @keyframes floatUp { 0% { opacity:0; transform:translate(-50%,10px) scale(.7);} 25% { opacity:1; transform:translate(-50%,0) scale(1.15);} 100% { opacity:0; transform:translate(-50%,-60px) scale(1);} }
+
+  /* ── End screen ── */
+  .title-box { text-align:center; background:#FBF5E6; border:2px solid #C99A3C; border-radius:12px; padding:14px; margin:12px 0; }
+  .title-label { font-size:12px; letter-spacing:2px; color:#7A6A50; }
+  .imperial-title { font-size:22px; font-weight:bold; color:#A62C21; margin:6px 0; animation:titleIn .8s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes titleIn { from { transform:scale(0) rotate(-8deg); opacity:0; } }
+  .final-gold { font-size:28px; font-weight:bold; color:#8A6A1F; margin:8px 0; }
+  .report { background:#FBF5E6; border:1.5px dashed #D8C9A8; border-radius:10px; padding:10px 14px; font-size:14.5px; line-height:1.9; }
+
+  /* ── Confetti ── */
+  .confetti { position:fixed; top:-12px; z-index:40; pointer-events:none; font-size:20px; animation:fall linear forwards; }
+  @keyframes fall { to { transform:translateY(110vh) rotate(720deg); opacity:.4; } }
+
+  /* ── Sound toggle ── */
+  .sound-btn {
+    position:fixed; top:10px; right:10px; z-index:60;
+    background:#241A12; border:1.5px solid #C99A3C; color:#C99A3C;
+    border-radius:50%; width:40px; height:40px; font-size:17px; cursor:pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<button class="sound-btn" id="soundBtn" onclick="toggleSound()">🔊</button>
+<div id="app"></div>
+
+<script>
+// ══════════ GAME DATA ══════════
+// Each dynasty has: 2 knowledge questions + 1 "Emperor's Decision".
+// Decisions have NO wrong answer — each choice earns different Wisdom Gold
+// based on how closely it matches that dynasty's real spirit and history.
+const DYNASTIES = [
+  { name:"Shang", years:"c. 1600–1046 BCE", emoji:"🐢", building:"🛖", color:"#8C5A2B",
+    facts:[
+      "The Shang were the first Chinese dynasty with written records.",
+      "Priests wrote questions on ox bones and turtle shells called ORACLE BONES.",
+      "They were masters at making beautiful bronze vessels." ],
+    questions:[
+      { q:"What did the Shang write their earliest records on?",
+        options:["Paper scrolls","Oracle bones","Silk banners","Stone tablets"], answer:1,
+        fun:"Oracle bones were cracked with hot rods, and the cracks were read as answers from the ancestors!" },
+      { q:"The Shang were famous for their skill with which metal?",
+        options:["Gold","Iron","Bronze","Silver"], answer:2,
+        fun:"Some Shang bronze pots weigh more than an adult human — over 800 kg!" } ],
+    decision:{
+      q:"👑 You are a Shang king. A terrible drought hits your kingdom. What do you do?",
+      options:[
+        { t:"Ask the ancestors for guidance using oracle bones", gold:200,
+          why:"The true Shang way! Shang kings asked the ancestors about everything — rain, harvests, even battles." },
+        { t:"Order your priests to make bronze offerings to the gods", gold:150,
+          why:"Very Shang! Bronze vessels were made exactly for offerings — though a king would check the oracle bones first." },
+        { t:"Send messengers to ask a neighbouring kingdom for advice", gold:80,
+          why:"Sensible, but not very Shang — they trusted their own ancestors far more than outsiders." },
+        { t:"Decide everything yourself without asking anyone", gold:50,
+          why:"A Shang king would never skip the ancestors — ignoring the oracle bones was asking for trouble!" } ] } },
+
+  { name:"Zhou", years:"1046–256 BCE", emoji:"☯️", building:"⛩️", color:"#4A6B8A",
+    facts:[
+      "The Zhou ruled the LONGEST of all Chinese dynasties — about 800 years!",
+      "They said kings ruled by the 'Mandate of Heaven' — heaven's permission to rule.",
+      "The great teacher Confucius lived during Zhou times." ],
+    questions:[
+      { q:"What was the 'Mandate of Heaven'?",
+        options:["A map of the stars","Heaven's permission for a king to rule","A festival for the sky god","A tax paid by farmers"], answer:1,
+        fun:"If a ruler was cruel or there were floods and famines, people believed heaven had taken the mandate away!" },
+      { q:"Which famous teacher and thinker lived during the Zhou dynasty?",
+        options:["Confucius","Marco Polo","Zheng He","Kangxi"], answer:0,
+        fun:"Confucius taught respect for family and kindness — his ideas still shape China 2,500 years later." } ],
+    decision:{
+      q:"👑 You have just become a Zhou king. How do you prove you deserve the Mandate of Heaven?",
+      options:[
+        { t:"Rule kindly and fairly so heaven stays pleased", gold:200,
+          why:"Exactly the Zhou belief! A just ruler keeps the Mandate; a cruel one loses it — and his throne." },
+        { t:"Invite wise teachers like Confucius to advise you", gold:150,
+          why:"Very Zhou! This was the age of great thinkers, and wise kings listened to them." },
+        { t:"Throw a grand feast so everyone praises your name", gold:80,
+          why:"Fun, but the Mandate came from good rule, not good parties!" },
+        { t:"Build a giant statue of yourself in every town", gold:50,
+          why:"Heaven judged kings by fairness, not statues — the Zhou would call this vanity!" } ] } },
+
+  { name:"Qin", years:"221–206 BCE", emoji:"🗿", building:"🧱", color:"#5C5470",
+    facts:[
+      "Qin Shi Huang united all of China and became the FIRST EMPEROR.",
+      "He began joining walls together — the start of the Great Wall.",
+      "He was buried with 8,000 clay soldiers: the Terracotta Army." ],
+    questions:[
+      { q:"What is Qin Shi Huang most famous for being?",
+        options:["China's greatest poet","The first emperor of a united China","The inventor of paper","A famous sea explorer"], answer:1,
+        fun:"'Qin' is even where the name 'China' comes from!" },
+      { q:"What guards Qin Shi Huang's tomb?",
+        options:["8,000 clay soldiers","A wall of gold","Stone dragons","Real royal guards"], answer:0,
+        fun:"Every Terracotta soldier has a different face — no two are the same!" } ],
+    decision:{
+      q:"👑 You now rule many states that each have their own money, writing, and laws. What do you do?",
+      options:[
+        { t:"Unite them all: one law, one money, one writing system", gold:200,
+          why:"Pure Qin Shi Huang! He standardised coins, writing, laws — even the width of cart wheels!" },
+        { t:"Build strong walls to protect the northern border", gold:150,
+          why:"Very Qin — he joined old walls into the beginnings of the Great Wall. But unification came first." },
+        { t:"Let each state keep voting on its own rules", gold:80,
+          why:"Kind, but the opposite of the Qin way — Qin Shi Huang believed one strong ruler kept the peace." },
+        { t:"Ignore the differences and hope for the best", gold:50,
+          why:"With every state using different money and writing, the empire would fall apart fast!" } ] } },
+
+  { name:"Han", years:"206 BCE–220 CE", emoji:"📜", building:"🏛️", color:"#2E7D5B",
+    facts:[
+      "The Han dynasty was a GOLDEN AGE — most Chinese still call themselves 'Han people'.",
+      "Paper was invented during Han times!",
+      "The Silk Road connected China to lands far away for trade." ],
+    questions:[
+      { q:"Which world-changing invention came from the Han dynasty?",
+        options:["The wheel","Paper","Glass","The telescope"], answer:1,
+        fun:"Before paper, people wrote on heavy bamboo strips — a single 'book' could need a cart to carry it!" },
+      { q:"What was the Silk Road?",
+        options:["A road paved with silk","A river in China","Trade routes linking China to faraway lands","The emperor's private highway"], answer:2,
+        fun:"Silk, spices, ideas, and even noodles travelled along the Silk Road for centuries." } ],
+    decision:{
+      q:"👑 Your Han empire is peaceful and rich. How do you use this golden age?",
+      options:[
+        { t:"Open trade routes to faraway lands", gold:200,
+          why:"The Han spirit! The Silk Road carried Chinese silk west and brought back horses, ideas, and treasures." },
+        { t:"Support scholars and inventors in your court", gold:150,
+          why:"Very Han — this is the dynasty that gave the world paper and started civil service exams!" },
+        { t:"Build yourself a bigger, fancier palace", gold:80,
+          why:"Emperors did love palaces… but the Han greatness came from trade and learning, not luxury." },
+        { t:"Lock all the treasure away so nobody can touch it", gold:50,
+          why:"Gold sitting in a vault builds nothing — the Han knew wealth grows when it moves!" } ] } },
+
+  { name:"Tang", years:"618–907 CE", emoji:"🏮", building:"🏮", color:"#B0413E",
+    facts:[
+      "The Tang dynasty was the golden age of POETRY and art.",
+      "Wu Zetian became the ONLY woman emperor in Chinese history.",
+      "The capital, Chang'an, was the biggest city in the world!" ],
+    questions:[
+      { q:"Who was Wu Zetian?",
+        options:["A famous Tang general","The only woman to rule China as emperor","The inventor of the compass","A great Tang poet"], answer:1,
+        fun:"Wu Zetian started as a palace attendant and rose all the way to the throne!" },
+      { q:"The Tang dynasty is best remembered as a golden age of…",
+        options:["Poetry and art","Sea voyages","Railway building","Pyramid building"], answer:0,
+        fun:"Tang poets like Li Bai are still memorised by schoolchildren across China today." } ],
+    decision:{
+      q:"👑 A talented young poet arrives at your Tang court asking for support. What do you do?",
+      options:[
+        { t:"Welcome them — great art makes an empire shine!", gold:200,
+          why:"The Tang heart! Emperors treasured poets, and Chang'an buzzed with artists from everywhere." },
+        { t:"Invite musicians and painters from many lands too", gold:150,
+          why:"Very Tang — Chang'an was the most international city on Earth, full of foreign artists and traders." },
+        { t:"Say yes, but only if they write poems praising you", gold:80,
+          why:"A bit selfish! The greatest Tang poems were about moons, rivers, and friendship — not flattery." },
+        { t:"Send them away — poetry doesn't grow rice", gold:50,
+          why:"Ouch! You'd be remembered as the emperor who turned away the next Li Bai." } ] } },
+
+  { name:"Song", years:"960–1279 CE", emoji:"🧭", building:"🎆", color:"#3A7CA5",
+    facts:[
+      "The Song were incredible INVENTORS.",
+      "They gave the world the magnetic compass, gunpowder, and printing.",
+      "They even invented the world's first PAPER MONEY!" ],
+    questions:[
+      { q:"Which of these was NOT a Song dynasty invention?",
+        options:["Magnetic compass","Paper money","Gunpowder for fireworks","The smartphone"], answer:3,
+        fun:"Gunpowder was discovered by accident — by people trying to make a potion for long life!" },
+      { q:"Why was paper money such a clever idea?",
+        options:["It was pretty to look at","It was much lighter than carrying heavy coins","It could be eaten in emergencies","It never got stolen"], answer:1,
+        fun:"Merchants used to carry strings of thousands of metal coins — paper money changed everything." } ],
+    decision:{
+      q:"👑 Your Song inventors show you a strange new powder that sparks and bangs. What do you do?",
+      options:[
+        { t:"Fund them to experiment and discover more", gold:200,
+          why:"The Song spirit! Curiosity gave them the compass, printing, and gunpowder — invention was their superpower." },
+        { t:"Use it to create dazzling fireworks for festivals", gold:150,
+          why:"Very Song — that's exactly what they did! Fireworks lit up Song festivals for the first time in history." },
+        { t:"Sell the secret to the highest bidder right away", gold:80,
+          why:"The Song loved trade, but selling a secret before understanding it? A true inventor explores first!" },
+        { t:"Ban it — strange new things are dangerous", gold:50,
+          why:"Banning curiosity is the least Song thing possible — they were history's great experimenters!" } ] } },
+
+  { name:"Ming", years:"1368–1644 CE", emoji:"⛵", building:"🏯", color:"#C08A2D",
+    facts:[
+      "The Ming built the FORBIDDEN CITY — a palace with 9,999 rooms (so people say!).",
+      "Admiral Zheng He sailed giant treasure ships as far as Africa.",
+      "They rebuilt the Great Wall with strong bricks — the wall we see today." ],
+    questions:[
+      { q:"What amazing palace did the Ming build in Beijing?",
+        options:["The Taj Mahal","The Forbidden City","The Colosseum","The Summer Pyramid"], answer:1,
+        fun:"It was 'forbidden' because ordinary people could not enter without the emperor's permission!" },
+      { q:"What was Admiral Zheng He famous for?",
+        options:["Painting dragons","Sailing huge treasure ships on great voyages","Building the Terracotta Army","Inventing gunpowder"], answer:1,
+        fun:"Zheng He's biggest ships were possibly 4–5 times larger than Columbus's ships!" } ],
+    decision:{
+      q:"👑 You are a Ming emperor with great wealth and power. How do you show the world China's glory?",
+      options:[
+        { t:"Send giant treasure ships to explore and trade", gold:200,
+          why:"The Zheng He way! Ming treasure fleets sailed to India, Arabia, and Africa carrying silk and porcelain." },
+        { t:"Build a magnificent palace city in your capital", gold:150,
+          why:"Very Ming — that's the Forbidden City! Still the largest palace complex on Earth." },
+        { t:"Conquer all your neighbours by force", gold:80,
+          why:"The Ming mostly preferred impressing the world over conquering it — glory through greatness, not war." },
+        { t:"Hide your wealth so no one gets jealous", gold:50,
+          why:"The Ming built the world's grandest palace — hiding was definitely not their style!" } ] } },
+
+  { name:"Qing", years:"1644–1912 CE", emoji:"🐉", building:"🐉", color:"#7A3E9D",
+    facts:[
+      "The Qing were the LAST dynasty of China.",
+      "Emperor Kangxi ruled for 61 years — the longest reign of any emperor.",
+      "In 1912, dynasty rule ended after almost 4,000 years!" ],
+    questions:[
+      { q:"Who ruled longer than any other emperor in Chinese history?",
+        options:["Qin Shi Huang","Wu Zetian","Kangxi","Confucius"], answer:2,
+        fun:"Kangxi loved learning — he studied maths, astronomy, and music from scholars around the world." },
+      { q:"What happened in 1912?",
+        options:["The Great Wall was finished","China's dynasty rule came to an end","Paper was invented","The Forbidden City was built"], answer:1,
+        fun:"The last emperor, Puyi, was only 6 years old when he gave up the throne." } ],
+    decision:{
+      q:"👑 You are a Qing emperor ruling a vast empire of many different peoples. How do you rule?",
+      options:[
+        { t:"Study maths, astronomy, and ideas from scholars of many lands", gold:200,
+          why:"The Kangxi way! He learned from Chinese, Manchu, and even European scholars — a truly curious emperor." },
+        { t:"Respect the different traditions of the peoples in your empire", gold:150,
+          why:"Very Qing — they ruled Manchus, Han, Mongols, Tibetans and more, keeping many traditions alive." },
+        { t:"Rule only to make your own family rich", gold:80,
+          why:"Selfish rulers lose the Mandate of Heaven — remember the Zhou lesson!" },
+        { t:"Refuse to learn anything new from anyone", gold:50,
+          why:"Closing the door to new ideas weakened the late Qing — history's big warning!" } ] } },
+];
+
+const BASE_GOLD = 100, BONUS = 150, TOTAL_Q = 16, MAX_WISDOM = 1600;
+const TITLES = [
+  { min:6200, title:"Legendary Son of Heaven 👑", note:"A flawless golden reign, ruled with true dynasty wisdom!" },
+  { min:4400, title:"Wise Emperor 🐉", note:"Your treasury overflows! The Mandate of Heaven is firmly yours." },
+  { min:2400, title:"Rising Ruler 🏮", note:"A strong reign! Sharpen your streaks and wisdom to earn more gold." },
+  { min:0,    title:"Young Apprentice 📜", note:"Every emperor starts somewhere. Read the scrolls and rule again!" },
+];
+const multFor = s => s>=3 ? 3 : s===2 ? 2 : 1;
+
+// ══════════ SOUND (Web Audio) ══════════
+let audioCtx = null, soundOn = true;
+function ctx(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); return audioCtx; }
+function tone(freq, start, dur, type="sine", vol=0.18){
+  if(!soundOn) return;
+  const c = ctx(), o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, c.currentTime+start);
+  g.gain.linearRampToValueAtTime(vol, c.currentTime+start+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime+start+dur);
+  o.connect(g).connect(c.destination);
+  o.start(c.currentTime+start); o.stop(c.currentTime+start+dur+0.05);
+}
+const sfx = {
+  tap:    () => tone(520,0,0.08,"triangle",0.1),
+  correct:() => { tone(523,0,0.12,"triangle"); tone(659,0.1,0.12,"triangle"); tone(784,0.2,0.22,"triangle"); },
+  coin:   () => { tone(988,0,0.07,"square",0.09); tone(1319,0.07,0.16,"square",0.09); },
+  wrong:  () => { tone(220,0,0.18,"sawtooth",0.12); tone(180,0.15,0.3,"sawtooth",0.1); },
+  bonus:  () => { [523,659,784,1047].forEach((f,i)=>tone(f,i*0.09,0.14,"triangle")); },
+  wisdom: () => { [440,554,659,880].forEach((f,i)=>tone(f,i*0.11,0.2,"sine",0.15)); },
+  fanfare:() => { [392,523,659,784,1047].forEach((f,i)=>tone(f,i*0.13,0.24,"triangle",0.16)); tone(1319,0.7,0.5,"triangle",0.14); },
+  scroll: () => tone(392,0,0.15,"sine",0.1),
+};
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById("soundBtn").textContent = soundOn ? "🔊" : "🔇";
+  if(soundOn) sfx.tap();
+}
+
+// ══════════ STATE ══════════
+let S;
+function reset(){
+  S = { phase:"start", d:0, q:0, coins:0, wisdomGold:0, correct:0, streak:0, best:0,
+        buildings:[], selected:null, dynCorrect:0, perfect:0, lastEarn:null, gotBonus:false,
+        decisionPick:null, bestDecisions:0 };
+}
+reset();
+
+// ══════════ RENDER ══════════
+const app = document.getElementById("app");
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function treasuryHTML(){
+  const nextMult = multFor(S.streak+1);
+  const inQuiz = S.phase==="quiz" || S.phase==="scroll";
+  let streakTxt = "";
+  if(S.phase==="decision") streakTxt = "🧠 Wisdom time — choose like a true emperor!";
+  else if(S.streak>=2) streakTxt = `🔥 Streak ${S.streak} — next answer ×${nextMult}!`;
+  else if(inQuiz) streakTxt = `Next answer: ${BASE_GOLD} gold`;
+  return `
+  <div class="treasury">
+    <div class="treasury-top">
+      <span class="coins" id="coinDisplay">🪙 ${S.coins.toLocaleString()} gold</span>
+      <span class="streak-label ${S.streak>=2 && S.phase!=="decision" ?"hot":""}">${streakTxt}</span>
+    </div>
+    <div class="skyline">
+      ${S.buildings.length===0
+        ? `<span class="hint">🌱 Empty land… answer correctly to build your empire!</span>`
+        : S.buildings.map((b,i)=>`<span class="b" style="animation-delay:${i===S.buildings.length-1?0:-1}s">${b}</span>`).join(" ")}
+    </div>
+  </div>`;
+}
+
+function progressHTML(){
+  return `<div class="progress">${DYNASTIES.map((d,i)=>
+    `<div style="background:${i<S.d?"#C99A3C":i===S.d?d.color:"#E4D8BC"}"></div>`).join("")}</div>`;
+}
+
+function render(){
+  let html = treasuryHTML();
+  const dyn = DYNASTIES[S.d];
+
+  if(S.phase==="start"){
+    html += `
+    <div class="card">
+      <div class="big-emoji">🏯</div>
+      <h1>Build the Dynasty</h1>
+      <div class="subtitle">CHINA EDITION</div>
+      <p style="font-size:15.5px;line-height:1.6;margin-bottom:10px">
+        Travel through <b>8 great dynasties</b> — from Shang to Qing. Read each dynasty's
+        scroll, answer the questions, make royal decisions, and fill your imperial treasury!</p>
+      <div class="scroll-box">
+        <b>💰 How to earn gold:</b><br>
+        🪙 Correct answer = <b>100 gold</b><br>
+        🔥 2 in a row = <b>×2</b> · 3+ in a row = <b>×3</b><br>
+        🏆 Both right in a dynasty = <b>+150 bonus</b><br>
+        👑 <b>Emperor's Decision:</b> no wrong answers — but the choice that best
+        matches the dynasty's true spirit earns up to <b>200 wisdom gold</b>!
+      </div>
+      <button class="btn" onclick="startGame()">Begin Your Reign →</button>
+    </div>`;
+  }
+
+  if(S.phase==="scroll"){
+    html += `
+    <div class="card">
+      ${progressHTML()}
+      <div class="big-emoji">${dyn.emoji}</div>
+      <h2 style="color:${dyn.color}">${dyn.name} Dynasty</h2>
+      <div class="years">${dyn.years}</div>
+      <div class="scroll-box">${dyn.facts.map(f=>`<p>📜 ${esc(f)}</p>`).join("")}</div>
+      <div class="tip">Read carefully — the scroll holds clues for the quiz <i>and</i> the Emperor's Decision!</div>
+      <button class="btn" style="background:${dyn.color}" onclick="toQuiz()">I'm Ready — Quiz Me!</button>
+    </div>`;
+  }
+
+  if(S.phase==="quiz"){
+    const qu = dyn.questions[S.q];
+    html += `
+    <div class="card" id="quizCard">
+      ${progressHTML()}
+      <div class="quiz-meta">
+        <span>${dyn.emoji} ${dyn.name} · Question ${S.q+1} of 2</span>
+        <span>✅ ${S.correct}/${TOTAL_Q}</span>
+      </div>
+      <h3>${esc(qu.q)}</h3>
+      ${qu.options.map((o,i)=>{
+        let cls="opt", pre=`${"ABCD"[i]}. `;
+        if(S.selected!==null){
+          if(i===qu.answer){ cls+=" right"; pre="✅ "; }
+          else if(i===S.selected){ cls+=" wrong"; pre="❌ "; }
+        }
+        return `<button class="${cls}" ${S.selected!==null?"disabled":""} onclick="pick(${i})">${pre}${esc(o)}</button>`;
+      }).join("")}
+      ${S.selected!==null ? feedbackHTML(dyn,qu) : ""}
+    </div>`;
+  }
+
+  if(S.phase==="decision"){
+    const dec = dyn.decision;
+    html += `
+    <div class="card royal">
+      ${progressHTML()}
+      <div class="decision-banner">👑 EMPEROR'S DECISION 👑</div>
+      <div class="decision-note">No wrong answers — but ruling like a true ${dyn.name} emperor earns the most wisdom gold!</div>
+      <h3>${esc(dec.q)}</h3>
+      ${dec.options.map((o,i)=>{
+        let cls="opt", tag="";
+        if(S.decisionPick!==null){
+          tag = `<span class="earn-tag">+${o.gold} 🪙</span>`;
+          if(i===S.decisionPick) cls+=" chosen";
+        }
+        return `<button class="${cls}" ${S.decisionPick!==null?"disabled":""} onclick="pickDecision(${i})">${tag}${esc(o.t)}</button>`;
+      }).join("")}
+      ${S.decisionPick!==null ? decisionFeedbackHTML(dyn) : ""}
+    </div>`;
+  }
+
+  if(S.phase==="end"){
+    const rank = TITLES.find(t=>S.coins>=t.min);
+    html += `
+    <div class="card">
+      <div class="big-emoji">🎇</div>
+      <h2 style="color:#A62C21">Your Reign Is Complete!</h2>
+      <div class="title-box">
+        <div class="title-label">YOUR IMPERIAL TITLE</div>
+        <div class="imperial-title">${rank.title}</div>
+        <p style="font-size:14px">${rank.note}</p>
+        <div class="final-gold">🪙 ${S.coins.toLocaleString()} gold</div>
+      </div>
+      <div class="report">
+        <b>📊 Reign Report:</b><br>
+        ✅ Correct answers: <b>${S.correct} / ${TOTAL_Q}</b><br>
+        🔥 Best streak: <b>${S.best}</b><br>
+        🏆 Perfect dynasties: <b>${S.perfect} / 8</b><br>
+        🧠 Wisdom gold from decisions: <b>${S.wisdomGold.toLocaleString()} / ${MAX_WISDOM.toLocaleString()}</b><br>
+        👑 Perfect emperor choices: <b>${S.bestDecisions} / 8</b><br>
+        🏙️ Buildings in your empire: <b>${S.buildings.length}</b>
+      </div>
+      <p class="tip" style="margin-top:10px">Compare your gold with your friends — every emperor rules differently!</p>
+      <button class="btn" onclick="restart()">Rule Again 🔄</button>
+    </div>`;
+  }
+
+  app.innerHTML = html;
+}
+
+function feedbackHTML(dyn,qu){
+  const isRight = S.selected===qu.answer;
+  if(isRight){
+    return `
+    <div class="feedback good">
+      <b>Correct! A ${dyn.building} rises in your empire!</b><br>
+      <span class="chip gold">+${S.lastEarn.total} gold ${S.lastEarn.mult>1?`<em>(100 × ${S.lastEarn.mult} streak!)</em>`:""}</span>
+      ${S.gotBonus?`<span class="chip bonus">🏆 +${BONUS} Perfect Dynasty!</span>`:""}
+      <div>💡 ${esc(qu.fun)}</div>
+      <button class="btn" style="background:${dyn.color}" onclick="next()">Continue →</button>
+    </div>`;
+  }
+  return `
+  <div class="feedback bad">
+    <b>Not quite — your streak resets to 0.</b>
+    <div>💡 ${esc(qu.fun)}</div>
+    <button class="btn" style="background:${dyn.color}" onclick="next()">Continue →</button>
+  </div>`;
+}
+
+function decisionFeedbackHTML(dyn){
+  const opt = dyn.decision.options[S.decisionPick];
+  const isBest = opt.gold===200;
+  const last = S.d===DYNASTIES.length-1;
+  return `
+  <div class="feedback royal">
+    <b>${isBest ? `A true ${dyn.name} ruler! 👑` : `You earned ${opt.gold} wisdom gold.`}</b><br>
+    <span class="chip wisdom">🧠 +${opt.gold} wisdom gold</span>
+    <div>${esc(opt.why)}</div>
+    ${!isBest?`<div style="margin-top:6px;font-size:13.5px;color:#7A6A50">💭 The most ${dyn.name}-style choice was: <b>"${esc(dyn.decision.options.find(o=>o.gold===200).t)}"</b></div>`:""}
+    <button class="btn" style="background:${dyn.color}" onclick="nextDynasty()">${last?"See My Empire →":"Next Dynasty →"}</button>
+  </div>`;
+}
+
+// ══════════ ACTIONS ══════════
+function startGame(){ sfx.scroll(); S.phase="scroll"; render(); }
+function toQuiz(){ sfx.tap(); S.phase="quiz"; render(); }
+function restart(){ sfx.tap(); reset(); render(); }
+
+function pick(i){
+  if(S.selected!==null) return;
+  const dyn = DYNASTIES[S.d], qu = dyn.questions[S.q];
+  S.selected = i;
+  if(i===qu.answer){
+    S.streak++; S.best=Math.max(S.best,S.streak); S.correct++;
+    const mult = multFor(S.streak), earned = BASE_GOLD*mult;
+    S.coins += earned;
+    S.lastEarn = { total:earned, mult };
+    S.buildings.push(dyn.building);
+    S.gotBonus = false;
+    if(S.q===1 && S.dynCorrect===1){ S.coins += BONUS; S.perfect++; S.gotBonus = true; }
+    S.dynCorrect++;
+    sfx.correct(); setTimeout(sfx.coin, 220);
+    if(S.gotBonus) setTimeout(sfx.bonus, 420);
+    floatGold("+"+(earned+(S.gotBonus?BONUS:0))+" 🪙");
+    render();
+    bumpCoins();
+  } else {
+    S.streak = 0; S.lastEarn = null; S.gotBonus = false;
+    sfx.wrong();
+    render();
+    const card = document.getElementById("quizCard");
+    if(card){ card.classList.add("shake"); }
+    if(navigator.vibrate) navigator.vibrate(120);
+  }
+}
+
+function next(){
+  sfx.tap();
+  S.selected=null; S.lastEarn=null; S.gotBonus=false;
+  const dyn = DYNASTIES[S.d];
+  if(S.q < dyn.questions.length-1){ S.q++; }
+  else { S.phase="decision"; S.decisionPick=null; sfx.scroll(); }
+  render();
+}
+
+function pickDecision(i){
+  if(S.decisionPick!==null) return;
+  const opt = DYNASTIES[S.d].decision.options[i];
+  S.decisionPick = i;
+  S.coins += opt.gold;
+  S.wisdomGold += opt.gold;
+  if(opt.gold===200) S.bestDecisions++;
+  sfx.wisdom(); setTimeout(sfx.coin, 320);
+  floatGold("+"+opt.gold+" 🧠");
+  render();
+  bumpCoins();
+}
+
+function nextDynasty(){
+  sfx.tap();
+  S.decisionPick=null;
+  if(S.d < DYNASTIES.length-1){
+    S.d++; S.q=0; S.dynCorrect=0; S.phase="scroll"; sfx.scroll();
+  } else {
+    S.phase="end"; sfx.fanfare(); confetti();
+  }
+  render();
+}
+
+// ══════════ EFFECTS ══════════
+function bumpCoins(){
+  const el = document.getElementById("coinDisplay");
+  if(el){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+}
+function floatGold(text){
+  const el = document.createElement("div");
+  el.className = "float-gold"; el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1200);
+}
+function confetti(){
+  const pieces = ["🎊","✨","🪙","🏮","🎉","⭐"];
+  for(let i=0;i<26;i++){
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = pieces[Math.floor(Math.random()*pieces.length)];
+    el.style.left = Math.random()*96 + "vw";
+    el.style.animationDuration = (2.2+Math.random()*2)+"s";
+    el.style.animationDelay = (Math.random()*0.9)+"s";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 5200);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
