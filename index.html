@@ -162,6 +162,10 @@ const DYNASTIES = [
       { q:"The Shang were famous for their skill with which metal?",
         options:["Gold","Iron","Bronze","Silver"], answer:2,
         fun:"Some Shang bronze pots weigh more than an adult human — over 800 kg!" } ],
+    bonus:{
+      q:"Fu Hao was one of the most famous women of the Shang dynasty. What was she?",
+      options:["A powerful army general","A famous singer","The inventor of silk","A bronze merchant"], answer:0,
+      fun:"Fu Hao was a queen AND a general who led 13,000 soldiers into battle — her tomb was found packed with weapons!" },
     decision:{
       q:"👑 You are a Shang king. A terrible drought hits your kingdom. What do you do?",
       options:[
@@ -186,6 +190,10 @@ const DYNASTIES = [
       { q:"Which famous teacher and thinker lived during the Zhou dynasty?",
         options:["Confucius","Marco Polo","Zheng He","Kangxi"], answer:0,
         fun:"Confucius taught respect for family and kindness — his ideas still shape China 2,500 years later." } ],
+    bonus:{
+      q:"Which world-famous book about war strategy was written during Zhou times?",
+      options:["The Dragon Scroll","The Art of War by Sun Tzu","The Emperor's Handbook","The Book of Walls"], answer:1,
+      fun:"'The Art of War' is over 2,400 years old — and business leaders and sports coaches still read it today!" },
     decision:{
       q:"👑 You have just become a Zhou king. How do you prove you deserve the Mandate of Heaven?",
       options:[
@@ -210,6 +218,10 @@ const DYNASTIES = [
       { q:"What guards Qin Shi Huang's tomb?",
         options:["8,000 clay soldiers","A wall of gold","Stone dragons","Real royal guards"], answer:0,
         fun:"Every Terracotta soldier has a different face — no two are the same!" } ],
+    bonus:{
+      q:"Qin Shi Huang sent explorers on a special mission across the seas. What were they searching for?",
+      options:["New lands to conquer","Giant pandas","A magic potion for eternal life","Gold mines"], answer:2,
+      fun:"He desperately wanted to live forever — some of the 'medicines' he took probably made his life shorter instead!" },
     decision:{
       q:"👑 You now rule many states that each have their own money, writing, and laws. What do you do?",
       options:[
@@ -234,6 +246,10 @@ const DYNASTIES = [
       { q:"What was the Silk Road?",
         options:["A road paved with silk","A river in China","Trade routes linking China to faraway lands","The emperor's private highway"], answer:2,
         fun:"Silk, spices, ideas, and even noodles travelled along the Silk Road for centuries." } ],
+    bonus:{
+      q:"Han inventor Zhang Heng built an amazing bronze machine. What could it detect?",
+      options:["Rainstorms","Earthquakes far away","Enemy armies","Lies"], answer:1,
+      fun:"His seismoscope had dragons holding balls — when an earthquake struck, a ball dropped into a toad's mouth showing the direction!" },
     decision:{
       q:"👑 Your Han empire is peaceful and rich. How do you use this golden age?",
       options:[
@@ -258,6 +274,10 @@ const DYNASTIES = [
       { q:"The Tang dynasty is best remembered as a golden age of…",
         options:["Poetry and art","Sea voyages","Railway building","Pyramid building"], answer:0,
         fun:"Tang poets like Li Bai are still memorised by schoolchildren across China today." } ],
+    bonus:{
+      q:"Which drink became hugely popular all across China during the Tang dynasty?",
+      options:["Coffee","Lemonade","Tea","Hot chocolate"], answer:2,
+      fun:"A Tang writer named Lu Yu even wrote a whole famous book just about tea — 'The Classic of Tea'!" },
     decision:{
       q:"👑 A talented young poet arrives at your Tang court asking for support. What do you do?",
       options:[
@@ -282,6 +302,10 @@ const DYNASTIES = [
       { q:"Why was paper money such a clever idea?",
         options:["It was pretty to look at","It was much lighter than carrying heavy coins","It could be eaten in emergencies","It never got stolen"], answer:1,
         fun:"Merchants used to carry strings of thousands of metal coins — paper money changed everything." } ],
+    bonus:{
+      q:"The giant Song capital city of Kaifeng was famous for having some of the world's first…",
+      options:["Restaurants serving food from menus","Football stadiums","Movie theatres","Shopping trolleys"], answer:0,
+      fun:"Kaifeng was buzzing with night markets, snack stalls, and restaurants — over a million people lived there!" },
     decision:{
       q:"👑 Your Song inventors show you a strange new powder that sparks and bangs. What do you do?",
       options:[
@@ -306,6 +330,10 @@ const DYNASTIES = [
       { q:"What was Admiral Zheng He famous for?",
         options:["Painting dragons","Sailing huge treasure ships on great voyages","Building the Terracotta Army","Inventing gunpowder"], answer:1,
         fun:"Zheng He's biggest ships were possibly 4–5 times larger than Columbus's ships!" } ],
+    bonus:{
+      q:"The Ming were world-famous for making beautiful blue-and-white…",
+      options:["Flags","Porcelain vases","Kites","Carpets"], answer:1,
+      fun:"Ming vases were so prized that today a single one can sell for millions — kings across the world collected them!" },
     decision:{
       q:"👑 You are a Ming emperor with great wealth and power. How do you show the world China's glory?",
       options:[
@@ -330,6 +358,10 @@ const DYNASTIES = [
       { q:"What happened in 1912?",
         options:["The Great Wall was finished","China's dynasty rule came to an end","Paper was invented","The Forbidden City was built"], answer:1,
         fun:"The last emperor, Puyi, was only 6 years old when he gave up the throne." } ],
+    bonus:{
+      q:"The Qing emperors were not Han Chinese. Which people did they originally come from?",
+      options:["The Mongols","The Manchu people","The Tibetans","The Vikings"], answer:1,
+      fun:"The Manchu came from the north-east and ruled China for nearly 270 years — while keeping their own language and traditions!" },
     decision:{
       q:"👑 You are a Qing emperor ruling a vast empire of many different peoples. How do you rule?",
       options:[
@@ -343,11 +375,11 @@ const DYNASTIES = [
           why:"Closing the door to new ideas weakened the late Qing — history's big warning!" } ] } },
 ];
 
-const BASE_GOLD = 100, BONUS = 150, TOTAL_Q = 16, MAX_WISDOM = 1600;
+const BASE_GOLD = 100, BONUS = 150, BONUS_Q_GOLD = 250, TOTAL_Q = 16, MAX_WISDOM = 1600, MAX_BONUS = 2000;
 const TITLES = [
-  { min:6200, title:"Legendary Son of Heaven 👑", note:"A flawless golden reign, ruled with true dynasty wisdom!" },
-  { min:4400, title:"Wise Emperor 🐉", note:"Your treasury overflows! The Mandate of Heaven is firmly yours." },
-  { min:2400, title:"Rising Ruler 🏮", note:"A strong reign! Sharpen your streaks and wisdom to earn more gold." },
+  { min:7900, title:"Legendary Son of Heaven 👑", note:"A flawless golden reign, ruled with true dynasty wisdom!" },
+  { min:5600, title:"Wise Emperor 🐉", note:"Your treasury overflows! The Mandate of Heaven is firmly yours." },
+  { min:3000, title:"Rising Ruler 🏮", note:"A strong reign! Sharpen your streaks and wisdom to earn more gold." },
   { min:0,    title:"Young Apprentice 📜", note:"Every emperor starts somewhere. Read the scrolls and rule again!" },
 ];
 const multFor = s => s>=3 ? 3 : s===2 ? 2 : 1;
@@ -386,7 +418,7 @@ let S;
 function reset(){
   S = { phase:"start", d:0, q:0, coins:0, wisdomGold:0, correct:0, streak:0, best:0,
         buildings:[], selected:null, dynCorrect:0, perfect:0, lastEarn:null, gotBonus:false,
-        decisionPick:null, bestDecisions:0 };
+        decisionPick:null, bestDecisions:0, bonusPick:null, bonusCorrect:0 };
 }
 reset();
 
@@ -399,6 +431,7 @@ function treasuryHTML(){
   const inQuiz = S.phase==="quiz" || S.phase==="scroll";
   let streakTxt = "";
   if(S.phase==="decision") streakTxt = "🧠 Wisdom time — choose like a true emperor!";
+  else if(S.phase==="bonus") streakTxt = `⭐ Bonus round — ${BONUS_Q_GOLD} gold at stake!`;
   else if(S.streak>=2) streakTxt = `🔥 Streak ${S.streak} — next answer ×${nextMult}!`;
   else if(inQuiz) streakTxt = `Next answer: ${BASE_GOLD} gold`;
   return `
@@ -438,6 +471,8 @@ function render(){
         🪙 Correct answer = <b>100 gold</b><br>
         🔥 2 in a row = <b>×2</b> · 3+ in a row = <b>×3</b><br>
         🏆 Both right in a dynasty = <b>+150 bonus</b><br>
+        ⭐ <b>Bonus question:</b> a famous fact NOT on the scroll — worth
+        <b>250 gold</b>, and a wrong guess never breaks your streak!<br>
         👑 <b>Emperor's Decision:</b> no wrong answers — but the choice that best
         matches the dynasty's true spirit earns up to <b>200 wisdom gold</b>!
       </div>
@@ -453,7 +488,7 @@ function render(){
       <h2 style="color:${dyn.color}">${dyn.name} Dynasty</h2>
       <div class="years">${dyn.years}</div>
       <div class="scroll-box">${dyn.facts.map(f=>`<p>📜 ${esc(f)}</p>`).join("")}</div>
-      <div class="tip">Read carefully — the scroll holds clues for the quiz <i>and</i> the Emperor's Decision!</div>
+      <div class="tip">Read carefully — the scroll helps with the quiz and Decision. But beware: the ⭐ Bonus Question is a famous fact NOT on this scroll!</div>
       <button class="btn" style="background:${dyn.color}" onclick="toQuiz()">I'm Ready — Quiz Me!</button>
     </div>`;
   }
@@ -477,6 +512,26 @@ function render(){
         return `<button class="${cls}" ${S.selected!==null?"disabled":""} onclick="pick(${i})">${pre}${esc(o)}</button>`;
       }).join("")}
       ${S.selected!==null ? feedbackHTML(dyn,qu) : ""}
+    </div>`;
+  }
+
+  if(S.phase==="bonus"){
+    const bq = dyn.bonus;
+    html += `
+    <div class="card royal" id="bonusCard">
+      ${progressHTML()}
+      <div class="decision-banner" style="background:#7A3E1D;color:#FFD97A">⭐ BONUS QUESTION ⭐</div>
+      <div class="decision-note">A famous ${dyn.name} fact that was NOT on the scroll! Worth ${BONUS_Q_GOLD} gold — and a wrong guess won't break your streak.</div>
+      <h3>${esc(bq.q)}</h3>
+      ${bq.options.map((o,i)=>{
+        let cls="opt", pre=`${"ABCD"[i]}. `;
+        if(S.bonusPick!==null){
+          if(i===bq.answer){ cls+=" right"; pre="✅ "; }
+          else if(i===S.bonusPick){ cls+=" wrong"; pre="❌ "; }
+        }
+        return `<button class="${cls}" ${S.bonusPick!==null?"disabled":""} onclick="pickBonus(${i})">${pre}${esc(o)}</button>`;
+      }).join("")}
+      ${S.bonusPick!==null ? bonusFeedbackHTML(dyn,bq) : ""}
     </div>`;
   }
 
@@ -517,6 +572,7 @@ function render(){
         ✅ Correct answers: <b>${S.correct} / ${TOTAL_Q}</b><br>
         🔥 Best streak: <b>${S.best}</b><br>
         🏆 Perfect dynasties: <b>${S.perfect} / 8</b><br>
+        ⭐ Bonus questions won: <b>${S.bonusCorrect} / 8</b> (${(S.bonusCorrect*BONUS_Q_GOLD).toLocaleString()} gold)<br>
         🧠 Wisdom gold from decisions: <b>${S.wisdomGold.toLocaleString()} / ${MAX_WISDOM.toLocaleString()}</b><br>
         👑 Perfect emperor choices: <b>${S.bestDecisions} / 8</b><br>
         🏙️ Buildings in your empire: <b>${S.buildings.length}</b>
@@ -546,6 +602,17 @@ function feedbackHTML(dyn,qu){
     <b>Not quite — your streak resets to 0.</b>
     <div>💡 ${esc(qu.fun)}</div>
     <button class="btn" style="background:${dyn.color}" onclick="next()">Continue →</button>
+  </div>`;
+}
+
+function bonusFeedbackHTML(dyn,bq){
+  const isRight = S.bonusPick===bq.answer;
+  return `
+  <div class="feedback ${isRight?"good":"bad"}">
+    <b>${isRight ? `Brilliant! A shining ⭐ joins your empire!` : `Not this time — but your streak is safe!`}</b><br>
+    ${isRight?`<span class="chip gold">⭐ +${BONUS_Q_GOLD} bonus gold</span>`:""}
+    <div>💡 ${esc(bq.fun)}</div>
+    <button class="btn" style="background:${dyn.color}" onclick="toDecision()">Emperor's Decision →</button>
   </div>`;
 }
 
@@ -601,7 +668,35 @@ function next(){
   S.selected=null; S.lastEarn=null; S.gotBonus=false;
   const dyn = DYNASTIES[S.d];
   if(S.q < dyn.questions.length-1){ S.q++; }
-  else { S.phase="decision"; S.decisionPick=null; sfx.scroll(); }
+  else { S.phase="bonus"; S.bonusPick=null; sfx.scroll(); }
+  render();
+}
+
+function pickBonus(i){
+  if(S.bonusPick!==null) return;
+  const bq = DYNASTIES[S.d].bonus;
+  S.bonusPick = i;
+  if(i===bq.answer){
+    S.coins += BONUS_Q_GOLD;
+    S.bonusCorrect++;
+    S.buildings.push("⭐");
+    sfx.bonus(); setTimeout(sfx.coin, 350);
+    floatGold("+"+BONUS_Q_GOLD+" ⭐");
+    render();
+    bumpCoins();
+  } else {
+    sfx.wrong();
+    render();
+    const card = document.getElementById("bonusCard");
+    if(card){ card.classList.add("shake"); }
+    if(navigator.vibrate) navigator.vibrate(120);
+  }
+}
+
+function toDecision(){
+  sfx.scroll();
+  S.bonusPick=null;
+  S.phase="decision"; S.decisionPick=null;
   render();
 }
 
